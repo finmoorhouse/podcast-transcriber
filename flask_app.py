@@ -67,7 +67,6 @@ def transcribe():
     audio_file = request.files.get('audio_file')
     api_endpoint = "https://api.gladia.io/audio/text/audio-transcription/"
     prompt = request.form.get('prompt')
-    ngrok = request.form.get('ngrok')
     if not prompt:
         prompt = ""
     if audio_file and allowed_file(audio_file.filename):
@@ -90,7 +89,7 @@ def transcribe():
                         'toggle_direct_translate': "false",
                         'language': "english",
                         'transcription_hint': prompt,
-                        'webhook_url' : f"{ngrok}/webhook" #I'm using ngrok while I'm developing, but this will just be the webhook endpoint in prod.
+                        'webhook_url' : "https://finm.pythonanywhere.com/webhook"
                     }
                     # Send a POST request to the transcription API
                     response = requests.post(api_endpoint, headers=headers, files=files)
@@ -172,16 +171,13 @@ def webhook_endpoint():
         transcript_id = request.json['request_id']
         print(f"Transcription received: {transcript_id}")  # Print the transcription data (you can process/store it as needed)
         print(response_to_md)
+        os.makedirs('transcriptions', exist_ok=True)
         with open(f"transcriptions/transcript-{transcript_id}.md", "w") as f:
             f.write(response_to_md)
         return "Thanks", 200
     else:
         app.logger.warning("Received non-handled method: %s", request.method)
         return "Method not allowed", 405
-    
-
 
 if __name__ == '__main__':
     app.run(port=5000)
-
-# Note that you can inspect ngrok requests at http://127.0.0.1:4040/inspect/http
