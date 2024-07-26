@@ -69,7 +69,7 @@ def transcribe():
     prompt = request.form.get('prompt')
     ngrok = request.form.get('ngrok')
     if not prompt:
-        prompt = "Hear This Idea"
+        prompt = ""
     if audio_file and allowed_file(audio_file.filename):
         # Split the audio file into chunks
         chunks = split_audio(audio_file)
