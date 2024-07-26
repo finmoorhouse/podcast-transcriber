@@ -89,7 +89,7 @@ def transcribe():
                         'toggle_direct_translate': "false",
                         'language': "english",
                         'transcription_hint': prompt,
-                        'webhook_url' : "https://finm.pythonanywhere.com/webhook"
+                        'webhook_url' : "https://podcast-transcriber.onrender.com/webhook"
                     }
                     # Send a POST request to the transcription API
                     response = requests.post(api_endpoint, headers=headers, files=files)
