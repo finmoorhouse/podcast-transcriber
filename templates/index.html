@@ -5,7 +5,6 @@
     <title>Upload Audio</title>
   </head>
   <body class="bg-slate-200">
-
     <div class="w-full max-w-md mx-auto my-12">
       <form
         class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4"
@@ -13,22 +12,7 @@
         method="post"
         enctype="multipart/form-data"
       >
-        <div class="mb-4">
-          <label
-            class="block text-gray-700 text-sm font-bold mb-2"
-            for="prompt"
-          >
-            Ngrok URL
-          </label>
-          <input
-            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            type="text"
-            name="ngrok"
-            id="ngrok"
-            placeholder="https://xxxx-xx-x-xx-xxx.ngrok.io"
-            required
-          />
-        </div>
+        <h1>Upload your audio</h1>
         <div class="mb-4">
           <label
             class="block text-gray-700 text-sm font-bold mb-2"
@@ -44,22 +28,6 @@
             placeholder="Transcription hint"
           />
         </div>
-        <!-- <div class="mb-4">
-          <label
-            class="block text-gray-700 text-sm font-bold mb-2"
-            for="prompt"
-          >
-            URL
-          </label>
-          <input
-            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            type="text"
-            name="audio_url"
-            value="https://audio-samples.github.io/samples/mp3/blizzard_primed/sample-1.mp3"
-            placeholder="https://..."
-          />
-        </div> -->
-
         <div class="mb-6">
           <label class="block text-gray-700 text-sm font-bold mb-2" for="file">
             File
@@ -72,6 +40,19 @@
             required
           />
         </div>
+        <div class="mb-6">
+          <label class="block text-gray-700 text-sm font-bold mb-2" for="email">
+            Email
+          </label>
+          <input
+            class="shadow appearance-none rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
+            id="email"
+            type="email"
+            name="email"
+            required
+          />
+        </div>
+        
         <div class="flex items-center justify-between">
           <input
             class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
