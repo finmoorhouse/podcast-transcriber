@@ -1,14 +1,12 @@
-import requests
-import json
-from openai import OpenAI
-client = OpenAI()
-import time
 import os
+import json
+import time
 from dotenv import load_dotenv
-
+import requests
+from openai import OpenAI
 load_dotenv()
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
-client.api_key = os.getenv("OPENAI_API_KEY")
 
 
 def transcribe_audio(audio_file_url, callback_url, gladia_api_key, custom_vocab):
