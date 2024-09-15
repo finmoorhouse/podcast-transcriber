@@ -12,36 +12,37 @@
         method="post"
         enctype="multipart/form-data"
       >
-        <h1>Upload your audio</h1>
+        <h1 class="block font-bold text-gray-700 text-lg mb-6">Upload your audio</h1>
         <div class="mb-4">
           <label
-            class="block text-gray-700 text-sm font-bold mb-2"
-            for="prompt"
+            class="block text-gray-700 text-md mb-2"
+            for="vocab"
           >
-            Prompt
+            Custom vocabulary (separated by commas)
           </label>
           <input
             class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             type="text"
-            name="prompt"
-            id="prompt"
-            placeholder="Transcription hint"
+            name="vocab"
+            id="vocab"
+            placeholder="Custom vocabulary"
           />
         </div>
         <div class="mb-6">
-          <label class="block text-gray-700 text-sm font-bold mb-2" for="file">
-            File
+          <label class="block text-gray-700 text-md mb-2" for="file">
+            URL of audio file
           </label>
           <input
             class="shadow appearance-none rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
-            id="file"
-            type="file"
-            name="audio_file"
+            id="url"
+            type="url"
+            name="url"
             required
+            value="http://files.gladia.io/example/audio-transcription/split_infinity.wav"
           />
         </div>
         <div class="mb-6">
-          <label class="block text-gray-700 text-sm font-bold mb-2" for="email">
+          <label class="block text-gray-700 text-md mb-2" for="email">
             Email
           </label>
           <input

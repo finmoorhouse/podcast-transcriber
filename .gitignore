@@ -32,6 +32,9 @@ Thumbs.db
 *.mp3
 *.wav
 
+#Markdown files
+*.md
+
 # Temporary files
 temp_*
 
