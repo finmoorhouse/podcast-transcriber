@@ -9,11 +9,12 @@
 
 from flask import Flask, request, jsonify, render_template
 from email_utils import send_confirmation_email, send_completion_email
-from transcription_utils import transcribe_audio, parse_response
+from transcription_utils import parse_response, transcribe_audio_file_requests
 import requests
 import os
 import json
 from dotenv import load_dotenv
+import threading
 from pydub import AudioSegment
 from alive_progress import alive_bar
 
@@ -21,12 +22,12 @@ from alive_progress import alive_bar
 from pyngrok import ngrok
 import sys
 
-
 print(f"Running in directory: {os.getcwd()}")
 
 
 load_dotenv()
 gladia_api_key = os.getenv("GLADIA_API_KEY_2")
+deepgram_api_key = os.getenv("DEEPGRAM_API_KEY")
 ngrok_authtoken = os.getenv("NGROK_AUTHTOKEN")
 mailgun_api_key = os.getenv("MAILGUN_API_KEY")
 mailgun_domain = os.getenv("MAILGUN_DOMAIN")
@@ -35,6 +36,8 @@ mailgun_domain = os.getenv("MAILGUN_DOMAIN")
 print(f"Gladia API Key loaded: {'Yes' if gladia_api_key else 'No'}")
 
 app = Flask(__name__)
+app.config['UPLOAD_FOLDER'] = 'temp_uploads'
+os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
 
 def get_ngrok_url():
@@ -68,28 +71,39 @@ def index():
 
 
 @app.route("/transcribe", methods=["POST"])
+@app.route("/transcribe", methods=["POST"])
 def transcribe():
     vocab = request.form.get("vocab", "")
-    url = request.form.get("url")
     email = request.form.get("email")
+    file = request.files.get("file")
+
+    if not file:
+        return render_template("response.html", message="No file uploaded.")
 
     # Process the vocabulary input
     custom_vocab = [word.strip() for word in vocab.split(',') if word.strip()]
     
-    audio_file_url = (
-        url if url else "http://files.gladia.io/example/audio-transcription/split_infinity.wav"
-    )
+    # Save the uploaded file temporarily
+    temp_file_path = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
+    file.save(temp_file_path)
+
     callback_url = (
         ngrok_url + "/webhook"
         if is_development
         else "https://podcast-transcriber.onrender.com/webhook"
     )
     print(f"Callback URL: {callback_url}")
-    response = transcribe_audio(audio_file_url, callback_url, gladia_api_key, custom_vocab)
-    print(f"Gladia API response status: {response.status_code}")
-    print(f"Gladia API response text: {response.text}")
-    print(response.text)
-    recipient_email = os.getenv("TEST_EMAIL")
+
+    try:
+        with open(temp_file_path, "rb") as audio_file:
+            # response = transcribe_deepgram_audio(audio_file, callback_url, deepgram_api_key, custom_vocab)
+            response = transcribe_audio_file_requests(audio_file, callback_url, deepgram_api_key, custom_vocab)
+        print(f"API response: {str(response)[:100]}...")  # Print only first 100 characters
+    finally:
+        # Clean up the temporary file
+        os.remove(temp_file_path)
+
+    recipient_email = email or os.getenv("TEST_EMAIL")
 
     # Send a confirmation email to the user
     if recipient_email:
@@ -106,74 +120,75 @@ def transcribe():
     else:
         email_message = "No email provided."
     print(f"Email message: {email_message}")
+    
     # Return a response to the user
-    if response.status_code in [200, 201]:
-        # Send confirmation email
-        return render_template(
-            "response.html",
-            message=f"Transcription in progress. Check {recipient_email} for results.",
-        )
-    else:
-        print(f"Error from Gladia API: {response.text}, Error code: {response.status_code}")
-        return render_template(
-            "response.html",
-            message=f"Transcription in progress. Check {recipient_email} for results. \nA hiccup may have occurred, check logs for more.",
-        )
+    return render_template(
+        "response.html",
+        message=f"Transcription in progress. Check {recipient_email} for results.",
+    )
+
 
 
 def allowed_file(filename):
     allowed_extensions = {"mp3", "wav"}  # adjust as needed
     return "." in filename and filename.rsplit(".", 1)[1].lower() in allowed_extensions
 
-
-@app.route("/webhook", methods=["OPTIONS", "POST"])
-def webhook():
-    print(
-        "Webhook hit with method:", request.method
-    )  # This should print for every hit to the endpoint
-    if request.method == "OPTIONS":
-        # Pre-flight request. Reply successfully:
-        response = app.make_default_options_response()
-        # Add custom headers here, if needed for CORS
-        response.headers["Access-Control-Allow-Origin"] = "*"
-        response.headers["Access-Control-Allow-Methods"] = "POST"
-        response.headers["Access-Control-Allow-Headers"] = "Content-Type, x-gladia-key"
-        return response
-    # Process the webhook data here, e.g., saving the transcription to a file.
-    elif request.method == "POST":
-        data = request.json
-        print("Received JSON data.")
-        with open("logs/json_logs.txt", "a") as log_file:
-            log_file.write(json.dumps(data, indent=2) + "\n")  # Save the JSON data to a file
-        response_to_md = parse_response(request.json["payload"])
-        transcript_id = request.json["id"]
-        print(
-            f"Transcription received: {transcript_id}"
-        )  # Print the transcription data (you can process/store it as needed)
-        print(response_to_md[:200]) # Print the first 200 characters of the transcription
+def process_transcript(data):
+    try:
+        response_to_md = parse_response(data)
+        transcript_id = data["metadata"]["request_id"]
+        print(f"Transcription ID: {transcript_id}. Now writing to file.")
         os.makedirs("transcriptions", exist_ok=True)
         transcript_path = f"transcriptions/transcript-{transcript_id}.md"
         with open(transcript_path, "w") as f:
             f.write(response_to_md)
-            # Send a confirmation email to the user
+        
         recipient_email = os.getenv("TEST_EMAIL")
         if recipient_email:
             try:
                 email_response = send_completion_email(recipient_email, transcript_path)
-                if email_response.status_code == 200:
-                    email_message = "Completion email sent."
-                else:
-                    email_message = f"Failed to send completion email. Status code: {email_response.status_code}"
-            except requests.Timeout:
-                email_message = "Failed to send completion email due to timeout."
+                email_message = "Completion email sent." if email_response.status_code == 200 else f"Failed to send completion email. Status code: {email_response.status_code}"
             except requests.RequestException as e:
                 email_message = f"Failed to send completion email. Error: {str(e)}"
         else:
             email_message = "No email provided."
         print(email_message)
-        return "Thanks", 200
+    except Exception as e:
+        print(f"Error processing transcript: {str(e)}")
+
+@app.route("/webhook", methods=["OPTIONS", "POST"])
+def webhook():
+    print("Webhook hit with method:", request.method)
+    
+    if request.method == "OPTIONS":
+        # Pre-flight request. Reply successfully:
+        response = app.make_default_options_response()
+        response.headers["Access-Control-Allow-Origin"] = "*"
+        response.headers["Access-Control-Allow-Methods"] = "POST"
+        response.headers["Access-Control-Allow-Headers"] = "Content-Type, x-gladia-key"
+        return response
+    
+    elif request.method == "POST":
+        try:
+
+            data = request.json
+            print("Received JSON data from Deepgram API.")
+            
+            # Immediately return a success response
+            response = jsonify({"status": "success", "message": "Webhook received and processing started"})
+            
+            # Start processing in a separate thread
+            threading.Thread(target=process_transcript, args=(data,)).start()
+            
+            return response, 200
+        
+        except Exception as e:
+            print(f"Error processing webhook data: {str(e)}")
+            # Even if there's an error, return a success response to prevent retries
+            return jsonify({"status": "error", "message": "Error processing webhook data, but received"}), 200
+    
     else:
-        print("Received non-handled method: %s", request.method)
+        print(f"Received non-handled method: {request.method}")
         return "Method not allowed", 405
 
 
