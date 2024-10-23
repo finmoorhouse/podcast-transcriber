@@ -1,0 +1,118 @@
+body {
+    font-family: monospace;
+}    
+input {
+  background-color: #1d2021; /* bg-gruvbox-bg-hard */
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06); /* shadow */
+  appearance: none;
+  border: 1px solid #4f4f4f; /* Assuming a dark border color */
+  border-radius: 0.25rem; /* rounded */
+  width: 100%; /* w-full */
+  padding-top: 0.5rem; /* py-2 */
+  padding-bottom: 0.5rem; /* py-2 */
+  padding-left: 0.75rem; /* px-3 */
+  padding-right: 0.75rem; /* px-3 */
+  color: #ebdbb2; /* text-gruvbox-fg */
+  line-height: 1.25; /* leading-tight */
+  box-sizing: border-box;
+}
+
+input:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.5); /* focus:shadow-outline */
+}
+
+body {
+  background-color: #1d2021; /* bg-gruvbox-bg-hard */
+}
+
+div {
+  width: 100%;
+  max-width: 28rem; /* max-w-md */
+  margin-left: auto;
+  margin-right: auto;
+}
+
+form {
+  background-color: #282828; /* bg-gruvbox-bg */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* shadow-md */
+  border-radius: 0.25rem; /* rounded */
+  padding: 1.5rem 2rem 2rem; /* px-8 pt-6 pb-8 */
+  margin-bottom: 1rem; /* mb-4 */
+}
+
+h1 {
+  display: block;
+  font-weight: bold;
+  color: #ebdbb2; /* text-gruvbox-fg */
+  font-size: 1.125rem; /* text-lg */
+  margin-bottom: 1.5rem; /* mb-6 */
+}
+
+label {
+  display: block;
+  color: #ebdbb2; /* text-gruvbox-fg */
+  font-size: 1rem; /* text-md */
+  margin-bottom: 0.5rem; /* mb-2 */
+}
+
+input[type="text"],
+input[type="email"],
+input[type="file"] {
+  margin-bottom: 0.75rem; /* mb-3 */
+}
+
+input[type="submit"] {
+  font-family: 'Arial', sans-serif;
+  background-color: #d65d0e; /* bg-gruvbox-orange */
+  color: white;
+  font-weight: bold;
+  padding: 0.75rem 1.5rem; /* Increased padding for better visual appeal */
+  border-radius: 0.5rem; /* Increased border-radius for a softer look */
+  cursor: pointer;
+  transition: all 0.3s ease; /* Smooth transition for hover effects */
+  border: none; /* Remove default border */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Add subtle shadow */
+  text-transform: uppercase; /* Uppercase text for emphasis */
+  letter-spacing: 1px; /* Increase letter spacing for style */
+}
+
+input[type="submit"]:hover {
+  background-color: #fe8019; /* Brighter orange on hover */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3); /* Increased shadow on hover */
+  transform: translateY(-2px); /* Slight lift effect on hover */
+}
+
+input[type="submit"]:active {
+  transform: translateY(1px); /* Press down effect when clicked */
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2); /* Reduced shadow when pressed */
+}
+
+.flex {
+  display: flex;
+}
+
+.items-center {
+  align-items: center;
+}
+
+.justify-between {
+  justify-content: space-between;
+}
+
+p {
+  text-align: center;
+  color: #718096; /* text-gray-500 */
+  font-size: 0.75rem; /* text-xs */
+}
+
+
+::selection {
+  background-color: #d65d0e;
+  color: #ebdbb2; /* Ensuring text is readable on the orange background */
+}
+
+::-moz-selection {
+  background-color: #d65d0e;
+  color: #ebdbb2;/* Ensuring text is readable on the orange background */
+}
