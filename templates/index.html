@@ -9,18 +9,10 @@
   </head>
   <body>
     <div>
-      <form
-        action="/transcribe"
-        method="post"
-        enctype="multipart/form-data"
-      >
-        <h1>
-          Upload your audio
-        </h1>
+      <form action="/transcribe" method="post" enctype="multipart/form-data">
+        <h1>Upload your audio</h1>
         <div>
-          <label for="vocab">
-            Custom vocabulary (separated by commas)
-          </label>
+          <label for="vocab"> Custom vocabulary (separated by commas) </label>
           <input
             type="text"
             name="vocab"
@@ -28,9 +20,12 @@
             placeholder="Custom vocabulary"
           />
         </div>
-        <div>
-          <label for="file">
-            Audio file
+        <div class="file-upload-container">
+          <label for="file" class="file-upload-label">
+            <div class="file-upload-text">
+              <span id="file-header">Drop audio file here</span>
+              <span id="file-name">or click to upload</span>
+            </div>
           </label>
           <input
             id="file"
@@ -38,12 +33,18 @@
             name="file"
             accept="audio/*"
             required
+            onchange="updateFileName(this)"
           />
         </div>
+        <script>
+          function updateFileName(input) {
+            const fileName = input.files[0] ? input.files[0].name : 'Drop audio file here';
+            document.getElementById('file-name').textContent = fileName;
+            document.getElementById('file-header').textContent = "File selected";
+          }
+        </script>
         <div>
-          <label for="email">
-            Email
-          </label>
+          <label for="email"> Email </label>
           <input
             id="email"
             type="email"
@@ -54,10 +55,7 @@
         </div>
 
         <div>
-          <input
-            type="submit"
-            value="Submit"
-          />
+          <input type="submit" value="Submit" />
         </div>
       </form>
     </div>

@@ -1,5 +1,5 @@
 body {
-    font-family: monospace;
+    font-family: sans-serif;
 }    
 input {
   background-color: #1d2021; /* bg-gruvbox-bg-hard */
@@ -61,9 +61,56 @@ input[type="email"],
 input[type="file"] {
   margin-bottom: 0.75rem; /* mb-3 */
 }
+#file {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.file-upload-container {
+  position: relative;
+  margin-bottom: 1rem;
+}
+
+.file-upload-label {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 200px;
+  background-color: #1d2021; /* bg-gruvbox-bg1 */
+  border: 1px dashed #928374; /* border-gruvbox-gray */
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.file-upload-label:hover {
+  background-color: #504945; /* bg-gruvbox-bg2 */
+}
+
+.file-upload-text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #ebdbb2; /* text-gruvbox-fg */
+}
+
+.file-upload-text span:first-child {
+  font-size: 1.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.file-upload-text span:last-child {
+  font-size: 0.875rem;
+  color: #a89984; /* text-gruvbox-fg4 */
+}
 
 input[type="submit"] {
-  font-family: 'Arial', sans-serif;
   background-color: #d65d0e; /* bg-gruvbox-orange */
   color: white;
   font-weight: bold;
@@ -115,4 +162,51 @@ p {
 ::-moz-selection {
   background-color: #d65d0e;
   color: #ebdbb2;/* Ensuring text is readable on the orange background */
+}
+
+/* Response page styles */
+.response-container {
+  width: 100%;
+  max-width: 28rem;
+  margin: 3rem auto;
+  background-color: #282828;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 0.25rem;
+  padding: 1.5rem 2rem 2rem;
+}
+
+.response-container h2 {
+  font-size: 1.125rem;
+  font-weight: bold;
+  color: #ebdbb2;
+  margin-bottom: 1rem;
+}
+
+.response-container p {
+  color: #ebdbb2;
+  text-align: left;
+  font-size: 1rem;
+}
+
+.back-button {
+  display: inline-block;
+  background-color: #d65d0e;
+  color: white;
+  font-weight: bold;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  text-decoration: none;
+  margin-top: 1.5rem;
+  transition: all 0.3s ease;
+}
+
+.back-button:hover {
+  background-color: #fe8019;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+  transform: translateY(-2px);
+}
+
+.back-button:active {
+  transform: translateY(1px);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
 }

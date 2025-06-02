@@ -120,7 +120,7 @@ def split_into_sentences(text: str) -> List[str]:
     return [s for s in sentences if s]  # Remove empty strings but keep '\n'
 
 
-def create_chunks(sentences: List[str], max_tokens: int = 800) -> List[str]:
+def create_chunks(sentences: List[str], max_tokens: int = 600) -> List[str]:
     """
     Create chunks of sentences that fit within the max_tokens limit.
 
@@ -166,15 +166,15 @@ def process_chunk_with_gpt4(chunk):
         try:
             print(f"Processing chunk: {chunk[:200]}...")
             response = client.chat.completions.create(
-                model="gpt-4o-mini",  # Updated to a standard GPT-4 model
+                model="gpt-4o-2024-11-20",  # Updated to a standard GPT-4 model
                 messages=[
                     {
                         "role": "system",
-                        "content": "You are an AI assistant that receives a verbatim transcript of an interview. You respond with the same text, lightly edited for clarity. You remove filler words, correct grammatical mistakes, and replace obvious transcription mistakes with the more likely alternative given the context. You remove obvious repetition. You add links in markdown format to resources mentioned where you are confident of the link (so 'World Health Organisation' could become '[World Health Organisation](https://www.who.int/)'). When a speaker appears to start talking about a new topic, you may add a markdown-formated h3 header (### Topic) before the next speaker is introduced in bold. You DO NOT invent any new sentences. You do NOT modify the speaker names in bold. The text should be returned in just the same format as it was received.",
+                        "content": "You are an AI assistant that receives a verbatim transcript of an interview. You respond with the same text, MINIMALLY edited for clarity. You remove filler words, correct grammatical mistakes, and replace obvious transcription mistakes with the more likely alternative given the context. You remove obvious repetition. If a line from a speaker is just filler, such as '[Spaker 0]: Mhmm.', then you can just delete the line as if the speaker never interrupted. You add links in markdown format to resources mentioned where you are confident of the link (so 'World Health Organisation' could become '[World Health Organisation](https://www.who.int/)'). When a speaker appears to start talking about a new topic, add a markdown-formated h3 header (### [Topic]) before the next speaker is introduced in bold, replacing [Topic] with the actual new topic. The speaker name (e.g. '[SPEAKER 0]:') should precede the speaker text without a line break. You DO NOT invent any new sentences. You DO NOT modify the speaker names in bold. You DO NOT remove any substantial content and you DO NOT summarise answers — the transcript you return should effectively be as long as the original, minus filler words and obvious repetition. You don't need to make speech less casual than it already is. The text should be returned in just the same format as it was received.",
                     },
                     {"role": "user", "content": chunk},
                 ],
-                max_tokens=4000,
+                max_tokens=5000,
                 n=1,
                 temperature=0.5,
             )
